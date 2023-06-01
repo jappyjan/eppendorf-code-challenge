@@ -8,7 +8,9 @@ import { Apigatewayv2Integration } from "@cdktf/provider-aws/lib/apigatewayv2-in
 import { Apigatewayv2Deployment } from "@cdktf/provider-aws/lib/apigatewayv2-deployment";
 import { Apigatewayv2Stage } from "@cdktf/provider-aws/lib/apigatewayv2-stage";
 import { LambdaPermission } from "@cdktf/provider-aws/lib/lambda-permission";
+import {DynamodbTable} from "@cdktf/provider-aws/lib/dynamodb-table";
 import * as path from "path";
+import * as dynamoModels from "../../dist/libs/dynamodb/src/models";
 
 export class BackendStack extends TerraformStack {
   private readonly api: Apigatewayv2Api;
@@ -26,6 +28,8 @@ export class BackendStack extends TerraformStack {
         },
       ],
     });
+
+    this.createDynamoTables();
 
     this.api = new Apigatewayv2Api(this, "api", {
       protocolType: "HTTP",
@@ -49,6 +53,30 @@ export class BackendStack extends TerraformStack {
 
     new Apigatewayv2Deployment(this, 'api-deployment', {
       apiId: this.api.id,
+    });
+  }
+
+  private createDynamoTables() {
+    Object.values(dynamoModels).map((model) => {
+      const pk = model.schemas[0].getHashKey();
+      const sk = model.schemas[0].getRangeKey();
+
+      new DynamodbTable(this, `${model.name}-table`, {
+        name: model.name,
+        hashKey: pk,
+        rangeKey: sk!,
+        billingMode: "PAY_PER_REQUEST",
+        attribute: [
+          {
+            name: 'PK',
+            type: 'S',
+          },
+          {
+            name: 'SK',
+            type: 'S',
+          }
+        ],
+      });
     });
   }
 
