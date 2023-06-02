@@ -15,7 +15,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@eppendorf-coding-challenge/dynamodb": ["libs/dynamodb/src/index.ts"]
+      "@eppendorf-coding-challenge/data-interfaces": [
+        "libs/data-interfaces/src/index.ts"
+      ],
+      "@eppendorf-coding-challenge/db-repositories": [
+        "libs/db-repositories/src/index.ts"
+      ],
+      "@eppendorf-coding-challenge/dynamodb": ["libs/dynamodb/src/index.ts"],
+      "@eppendorf-coding-challenge/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

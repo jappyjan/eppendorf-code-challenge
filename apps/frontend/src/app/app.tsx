@@ -1,22 +1,24 @@
-import {ChakraProvider} from "./providers/chakra.provider";
-import {Center, Heading, Spacer, HStack, Container} from "@chakra-ui/react";
+import {Heading, Spacer, HStack, Box, Button} from "@chakra-ui/react";
+import {DevicesList} from "./devices/devicesList";
+import {useQueryClient} from "react-query";
 
 export function App() {
+  const queryClient = useQueryClient();
+
   return (
-    <ChakraProvider>
-      <Container paddingInline="2rem" paddingBlock="1rem">
-        <nav>
-          <HStack>
-            <Heading>Eppendorf</Heading>
-            <Spacer/>
-            <ul></ul>
-          </HStack>
-        </nav>
-        <Center h="100vh">
-          <Heading>Hello World</Heading>
-        </Center>
-      </Container>
-    </ChakraProvider>
+    <Box padding='1rem'>
+      <nav>
+        <HStack>
+          <Heading>Eppendorf</Heading>
+          <Spacer/>
+          <Button onClick={() => queryClient.refetchQueries()}>Refresh</Button>
+        </HStack>
+      </nav>
+
+      <Box mt='5rem'>
+        <DevicesList/>
+      </Box>
+    </Box>
   );
 }
 

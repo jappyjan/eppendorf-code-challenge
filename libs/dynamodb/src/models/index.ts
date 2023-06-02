@@ -1,5 +1,1 @@
-import {DeviceModel} from './device';
-
-export {
-  DeviceModel
-}
+export * from './devices';

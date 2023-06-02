@@ -1,7 +1,7 @@
 {
   "name": "backend-e2e",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["backend-ping-pong"],
+  "implicitDependencies": [],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",

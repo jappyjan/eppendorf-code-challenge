@@ -1,0 +1,83 @@
+[
+  {
+    "id": 0,
+    "location": "Varniţa",
+    "type": "freezer",
+    "device_health": "broken",
+    "last_used": "10/10/2018",
+    "price": "79.00",
+    "color": "#541738"
+  },
+  {
+    "id": 1,
+    "location": "Lobanovo",
+    "type": "cycler",
+    "device_health": "good",
+    "last_used": "01/31/2019",
+    "price": "46.00",
+    "color": "#1d3b57"
+  },
+  {
+    "id": 2,
+    "location": "Mhāsvād",
+    "type": "shaker",
+    "device_health": "ok",
+    "last_used": "03/25/2019",
+    "price": "68.00",
+    "color": "#216855"
+  },
+  {
+    "id": 3,
+    "location": "Makinsk",
+    "type": "pipette",
+    "device_health": "mediocre",
+    "last_used": "11/17/2018",
+    "price": "43.00",
+    "color": "#161040"
+  },
+  {
+    "id": 4,
+    "location": "Santo Domingo",
+    "type": "pipette",
+    "device_health": "ok",
+    "last_used": "06/30/2019",
+    "price": "24.00",
+    "color": "#3a2265"
+  },
+  {
+    "id": 5,
+    "location": "Saint-Lary-Soulan",
+    "type": "pipette",
+    "device_health": "mediocre",
+    "last_used": "04/07/2019",
+    "price": "43.00",
+    "color": "#1d3c76"
+  },
+  {
+    "id": 6,
+    "location": "Kadirli",
+    "type": "shaker",
+    "device_health": "mediocre",
+    "last_used": "01/22/2019",
+    "price": "16.00",
+    "color": "#71152c"
+  },
+  {
+    "id": 7,
+    "location": "Xianxi",
+    "type": "shaker",
+    "device_health": "broken",
+    "last_used": "08/23/2019",
+    "price": "85.00",
+    "color": "#2a1b4b"
+  },
+  {
+    "id": 8,
+    "location": "Marine City",
+    "type": "freezer",
+    "device_health": "good",
+    "last_used": "01/27/2019",
+    "price": "32.00",
+    "color": "#1a1402"
+  }
+]
