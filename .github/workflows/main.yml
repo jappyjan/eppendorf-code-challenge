@@ -25,6 +25,8 @@ jobs:
       - name: terraform-cdk-action
         uses: hashicorp/terraform-cdk-action@v0.1.26
         with:
-            stackName: backend frontend
-            mode: plan-and-apply
-            terraformCloudToken: ${{ secrets.TERRAFORM_API_TOKEN }}
+          stackName: backend frontend
+          mode: plan-and-apply
+          terraformCloudToken: ${{ secrets.TERRAFORM_API_TOKEN }}
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TERRAFORM_API_TOKEN }}
