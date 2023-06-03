@@ -21,7 +21,5 @@ jobs:
         run: npm ci
       - name: NX build
         run: nx run-many --target=build
-      - name: cdktf node_modules install
-        run: (cd terraform && npm ci)
       - name: terraform deploy frontend & backend
-        run: (cd terraform && cdktf deploy frontend backend)
+        run: cdktf deploy frontend backend
