@@ -32,8 +32,9 @@ interface CreateLambdaOptions {
 export class BackendStack extends TerraformStack {
   private api!: Apigatewayv2Api;
   private dynamoTables: Record<string, DynamodbTable> = {};
+  // private readonly awsProviderUsEast: AwsProvider;
 
-  constructor(scope: Construct, id: string) {
+  public constructor(scope: Construct, id: string) {
     super(scope, id);
 
     new AwsProvider(this, "AWS", {
@@ -47,10 +48,28 @@ export class BackendStack extends TerraformStack {
       ],
     });
 
+    /*
+    this.awsProviderUsEast = new AwsProvider(this, "use_east", {
+      accessKey: process.env.AWS_ACCESS_KEY_ID,
+      secretKey: process.env.AWS_SECRET_ACCESS_KEY,
+      assumeRole: [
+        {
+          roleArn: process.env.AWS_ROLE_ARN,
+        },
+      ],
+      region: "us-east-1",
+      alias: "us-east-1"
+    });
+     */
+
     this.createDynamoTables();
 
     this.createApiGatewayApi();
 
+    this.createDevicesListEndpoint();
+  }
+
+  private createDevicesListEndpoint() {
     const devicesListHandler = this.createLambda(
       "devices-list-handler",
       path.resolve(__dirname, "../../dist/apps/backend/devices/list"),
@@ -76,8 +95,53 @@ export class BackendStack extends TerraformStack {
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowOrigins: ["*"],
         allowHeaders: ["*"],
+      },
+    });
+
+    /*
+    TODO: fix this, currently deployment fails when using a custom domain/certificate
+
+    const domainName = 'eppendorf-api.aws.janjaap.de';
+
+    const cert = new AcmCertificate(this, "api_cert", {
+      domainName,
+      validationMethod: "DNS",
+      lifecycle: {
+        createBeforeDestroy: true
+      },
+    });
+
+    const hostedZone = new DataAwsRoute53Zone(this, "api_zone", {
+      name: "aws.janjaap.de",
+    });
+
+    const record = new Route53Record(this, "api_validation_record", {
+      name: cert.domainValidationOptions.get(0).resourceRecordName,
+      type: cert.domainValidationOptions.get(0).resourceRecordType,
+      records: [cert.domainValidationOptions.get(0).resourceRecordValue],
+      zoneId: hostedZone.zoneId,
+      ttl: 60
+    });
+
+    new AcmCertificateValidation(this, 'api-certificate-validation', {
+      certificateArn: cert.arn,
+      validationRecordFqdns: [record.fqdn],
+      provider: this.awsProviderUsEast,
+      timeouts: {
+        create: '30m'
       }
     });
+
+    new Apigatewayv2DomainName(this, 'api-domain', {
+      domainName,
+      domainNameConfiguration: {
+        certificateArn: cert.arn,
+        endpointType: 'REGIONAL',
+        securityPolicy: 'TLS_1_2',
+      },
+    });
+
+    */
 
     new Apigatewayv2Stage(this, 'api-stage', {
       name: process.env.STAGE || "dev",
