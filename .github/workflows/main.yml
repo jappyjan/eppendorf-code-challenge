@@ -1,0 +1,21 @@
+name: Deploy to AWS
+on:
+  push:
+    branches:
+      - main
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v2.5.2
+        with:
+          node-version-file: .nvmrc
+      - name: CLI tools
+        run: npm i -g cdktf-cli@latest nx@latest
+      - name: node_modules install
+        run: npm ci
+      - name: NX build
+        run: nx run-many --target=build
+      - name: terraform deploy frontend & backend
+        run: (cd terraform && cdktf deploy frontend backend)
