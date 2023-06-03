@@ -18,7 +18,7 @@ jobs:
       - name: CLI tools
         run: npm i -g cdktf-cli@latest nx@latest
       - name: node_modules install
-        run: npm ci
+        run: npm ci --force
       - name: NX build
         run: nx run-many --target=build
       - name: terraform deploy frontend & backend
