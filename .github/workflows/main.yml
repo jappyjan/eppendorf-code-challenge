@@ -28,5 +28,6 @@ jobs:
           stackName: backend frontend
           mode: plan-and-apply
           terraformCloudToken: ${{ secrets.TERRAFORM_API_TOKEN }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TERRAFORM_API_TOKEN }}
