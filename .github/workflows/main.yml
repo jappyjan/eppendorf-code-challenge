@@ -21,5 +21,9 @@ jobs:
         run: npm ci --force
       - name: NX build
         run: nx run-many --target=build
-      - name: terraform deploy frontend & backend
-        run: cdktf deploy frontend backend
+      - name: terraform-cdk-action
+        uses: hashicorp/terraform-cdk-action@v0.1.26
+        with:
+            stackName: backend frontend
+            mode: plan-and-apply
+            terraformCloudToken: ${{ secrets.TERRAFORM_API_TOKEN }}
