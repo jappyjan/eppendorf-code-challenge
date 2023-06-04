@@ -67,6 +67,9 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      - name: node_modules install
+        run: npm ci --force
+
       - name: CLI tools
         run: npm i -g nx@latest
 
@@ -93,6 +96,9 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
+
+      - name: node_modules install
+        run: npm ci --force
 
       - name: install cdktf
         run: npm i -g cdktf-cli@latest
