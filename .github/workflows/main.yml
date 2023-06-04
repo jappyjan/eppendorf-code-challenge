@@ -35,7 +35,7 @@ jobs:
       - name: run unit tests
         run: nx run-many --target=test --all --parallel
 
-  Deploy:
+  Deploy_Backend:
     runs-on: ubuntu-latest
     environment: production
     needs: [Test_Unit]
@@ -66,10 +66,55 @@ jobs:
       - name: build
         run: nx run-many --target=build --all --parallel
 
-      - name: terraform deploy
+      - name: terraform deploy backend
         uses: hashicorp/terraform-cdk-action@v0.1.26
         with:
-          stackName: backend frontend
+          stackName: backend
+          mode: auto-approve-apply
+          terraformCloudToken: ${{ secrets.TERRAFORM_API_TOKEN }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TERRAFORM_API_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+
+  Deploy_Frontend:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [Test_Unit]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: node_modules install
+        run: npm ci --force
+
+      - name: install cdktf
+        run: npm i -g cdktf-cli@latest nx@latest
+
+      - name: build
+        run: nx build frontend
+
+      - name: terraform deploy frontend
+        uses: hashicorp/terraform-cdk-action@v0.1.26
+        with:
+          stackName: frontend
           mode: auto-approve-apply
           terraformCloudToken: ${{ secrets.TERRAFORM_API_TOKEN }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
