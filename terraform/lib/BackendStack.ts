@@ -109,7 +109,7 @@ export class BackendStack extends TerraformStack {
     } = params;
 
     const handler = this.createLambda(
-      `api-${method}-${path}-handler`,
+      `api-${method.toLowerCase()}-${path.toLowerCase().split('/').join('-')}-handler`,
       handlerLocation,
       handlerName,
       {
