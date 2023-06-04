@@ -64,7 +64,7 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
       setDevice({
         PK: '',
         SK: '',
-        id: -1,
+        id: undefined as unknown as number,
         type: '',
         device_health: '',
         price: 0,
@@ -134,7 +134,9 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
                   value={device.id ?? ''}
                   onChange={value => setDeviceProperty('id', Number(value))}
                 >
-                  <NumberInputField data-testid='upsert-drawer-id-input'/>
+                  <NumberInputField data-testid='upsert-drawer-id-input'
+                                    required
+                  />
                   <NumberInputStepper>
                     <NumberIncrementStepper/>
                     <NumberDecrementStepper/>
@@ -148,6 +150,7 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
                         value={device.type ?? ''}
                         onChange={(event) => setDeviceProperty('type', event.target.value)}
                         data-testid='upsert-drawer-type-input'
+                        required
                 >
                   {!device.type && (
                     <option disabled value=''>
@@ -179,6 +182,7 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
                   value={device.location}
                   onChange={(event) => setDeviceProperty('location', event.target.value)}
                   data-testid='upsert-drawer-location-input'
+                  required
                 />
               </Box>
 
@@ -188,6 +192,7 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
                         value={device.device_health ?? ''}
                         onChange={(event) => setDeviceProperty('device_health', event.target.value)}
                         data-testid='upsert-drawer-health-input'
+                        required
                 >
                   {!device.device_health && (
                     <option disabled value=''>
@@ -220,6 +225,7 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
                   onChange={(event) => setDeviceProperty('color', event.target.value)}
                   type='color'
                   data-testid='upsert-drawer-color-input'
+                  required
                 />
               </Box>
 
@@ -230,7 +236,9 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
                   onChange={(valueString) => setDeviceProperty('price', Number(valueString))}
                   value={formattedPrice}
                 >
-                  <NumberInputField data-testid='upsert-drawer-price-input'/>
+                  <NumberInputField data-testid='upsert-drawer-price-input'
+                                    required
+                  />
                   <NumberInputStepper>
                     <NumberIncrementStepper/>
                     <NumberDecrementStepper/>
@@ -258,5 +266,5 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
         </DrawerContent>
       </form>
     </Drawer>
-  )
+  );
 }

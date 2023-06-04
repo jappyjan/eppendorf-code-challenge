@@ -296,6 +296,7 @@ export class BackendStack extends TerraformStack {
       integrationType: "AWS_PROXY",
       integrationMethod: "POST",
       integrationUri: handler.lambdaFunc.invokeArn,
+      payloadFormatVersion: "2.0",
     });
 
     new Apigatewayv2Route(this, `${method}-${path}-route`, {
@@ -325,6 +326,7 @@ export class BackendStack extends TerraformStack {
       runtime: "nodejs16.x",
       namespace: process.env.NAMESPACE || "eppendorf",
       environment: process.env.ENV || "dev",
+      memorySize: 256,
       createRole: {
         iamRole: JSON.stringify({
           Version: "2012-10-17",

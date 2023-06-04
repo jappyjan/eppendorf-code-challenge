@@ -1,16 +1,22 @@
 import "source-map-support/register";
-import type {Context, Callback, APIGatewayEvent} from 'aws-lambda';
+import type {Context, Callback, APIGatewayProxyEventV2} from 'aws-lambda';
 import {DevicesRepository, UpsertDeviceData} from "@eppendorf-coding-challenge/db-repositories";
 import {DevicesModel} from "@eppendorf-coding-challenge/dynamodb";
 
-function getDeviceDataFromEvent(event: APIGatewayEvent): UpsertDeviceData {
+function getDeviceDataFromEvent(event: APIGatewayProxyEventV2): UpsertDeviceData {
   const parsed = JSON.parse(event.body);
 
-  const PK = parsed.PK ?? parsed.type;
-  if (!PK) throw new Error('PK is required');
+  let PK = String(parsed.PK).trim();
+  if (!PK) {
+    PK = String(parsed.type).trim();
+  }
+  if (!PK) throw new Error('PK or type is required');
 
-  const SK = parsed.SK ?? parsed.id;
-  if (!SK) throw new Error('SK is required');
+  let SK = String(parsed.SK).trim();
+  if (!SK) {
+    SK = String(parsed.id).trim();
+  }
+  if (!SK) throw new Error('SK or id is required');
 
   let last_used: Date | undefined;
   if (parsed.last_used) {
@@ -34,7 +40,9 @@ function getDeviceDataFromEvent(event: APIGatewayEvent): UpsertDeviceData {
   }
 }
 
-export async function handlerLogic(devicesRepository: DevicesRepository, event: APIGatewayEvent, context: Context, callback: Callback) {
+export async function handlerLogic(devicesRepository: DevicesRepository, event: APIGatewayProxyEventV2, context: Context, callback: Callback) {
+  console.log('event', event);
+
   let deviceDataFromEvent: UpsertDeviceData;
   try {
     deviceDataFromEvent = getDeviceDataFromEvent(event);
@@ -53,7 +61,7 @@ export async function handlerLogic(devicesRepository: DevicesRepository, event: 
 }
 
 export function makeHandler(devicesRepository: DevicesRepository) {
-  return (event: APIGatewayEvent, context: Context, callback: Callback) => {
+  return (event: APIGatewayProxyEventV2, context: Context, callback: Callback) => {
     return handlerLogic(devicesRepository, event, context, callback);
   }
 }
