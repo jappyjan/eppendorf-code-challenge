@@ -35,9 +35,10 @@ jobs:
 
       - name: Build
         run: nx run-many --target=build --all --parallel
+
       - uses: actions/upload-artifact@v2
         with:
-          name: build-artifacts
+          name: dist
           path: dist
 
   Test_Unit:
