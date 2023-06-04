@@ -5,46 +5,6 @@ on:
       - main
 
 jobs:
-  Build:
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-            fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2.5.2
-        with:
-          node-version-file: .nvmrc
-
-      - name: CLI tools
-        run: npm i -g nx@latest
-
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: node_modules install
-        run: npm ci --force
-
-      - name: Build
-        run: nx run-many --target=build --all --parallel
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist
-
   Test_Unit:
     runs-on: ubuntu-latest
     environment: production
@@ -55,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get cached node modules
+      - name: Cache node modules
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -79,18 +39,14 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     environment: production
-    needs: [Build, Test_Unit]
+    needs: [Test_Unit]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-
-      - name: Get cached node modules
+      - name: Cache node modules
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -106,7 +62,10 @@ jobs:
         run: npm ci --force
 
       - name: install cdktf
-        run: npm i -g cdktf-cli@latest
+        run: npm i -g cdktf-cli@latest nx@latest
+
+      - name: build
+        run: nx run-many --target=build --all --parallel
 
       - name: terraform-cdk-action
         uses: hashicorp/terraform-cdk-action@v0.1.26
