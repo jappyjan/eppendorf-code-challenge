@@ -15,8 +15,6 @@ import * as path from "path";
 import * as glob from 'glob';
 import * as mime from 'mime-types';
 import {AssetType, TerraformAsset} from "cdktf";
-import {readFileSync} from "fs";
-import {createHash} from "crypto";
 
 export class FrontendStack extends TerraformStack {
   private hostedZone!: DataAwsRoute53Zone;
@@ -183,18 +181,12 @@ export class FrontendStack extends TerraformStack {
 
     // Create bucket object for each file
     for (const file of files) {
+      console.log(`Uploading file ${file}`);
       const filePath = path.resolve(file);
-
-      const fileBuffer = readFileSync(filePath);
-      const hashSum = createHash('sha256');
-      hashSum.update(fileBuffer);
-
-      const fileHash = hashSum.digest('hex');
 
       const asset = new TerraformAsset(this, `website_asset_${path.basename(file)}`, {
         path: filePath,
         type: AssetType.FILE,
-        assetHash: fileHash,
       });
 
       new S3Object(this, `website_s3_object_${path.basename(file)}`, {
