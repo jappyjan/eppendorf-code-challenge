@@ -62,6 +62,9 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      - name: CLI tools
+        run: npm i -g nx@latest
+
       - name: run unit tests
         run: nx run-many --target=test --all --parallel
 
