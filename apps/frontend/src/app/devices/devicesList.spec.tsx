@@ -9,6 +9,9 @@ import fetch from 'node-fetch';
 import {it, describe, expect} from 'vitest';
 import {ChakraProvider} from "../../providers/chakra.provider";
 
+/**
+ * @vitest-environment jsdom
+ */
 describe('devicesList.spec.tsx', () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -61,7 +64,7 @@ describe('devicesList.spec.tsx', () => {
     it('should render an error message if the request fails', async () => {
       nockScope
         .get('/devices')
-        .reply(500, []);
+        .reply(500);
 
       const {getByText} = renderWithProviders(<DevicesList/>);
 

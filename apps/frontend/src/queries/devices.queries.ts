@@ -17,9 +17,26 @@ function modelDeviceToJson(device: Device): any {
   };
 }
 
+async function handleErrorResponse(response: Response) {
+  if (!(response.status < 200 || response.status >= 300)) {
+    return;
+  }
+
+  console.error('request failed, response: ', await response.clone().text());
+  try {
+    const parsed = await response.clone().json();
+    // noinspection ExceptionCaughtLocallyJS
+    throw new Error(parsed.message);
+  } catch (e) {
+    throw new Error('Request failed with status code ' + response.status);
+  }
+}
+
 async function fetchAllDevices() {
   const apiEndpoint: string = import.meta.env.VITE_API_ENDPOINT;
   const response = await fetch(`${apiEndpoint}/devices`);
+
+  await handleErrorResponse(response);
 
   const rawDevices = await response.json();
 
@@ -73,6 +90,8 @@ async function upsertDevice(device: Device) {
     },
     body: JSON.stringify(modelDeviceToJson(device)),
   });
+
+  await handleErrorResponse(response);
 
   const rawDevice = await response.json();
 
