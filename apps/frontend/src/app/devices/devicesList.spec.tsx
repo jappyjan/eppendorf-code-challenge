@@ -40,7 +40,7 @@ describe('devicesList.spec.tsx', () => {
 
     nockScope = nock(mockEndpoint);
 
-    global.fetch = fetch as never;
+    global.fetch = fetch as typeof global.fetch;
   });
 
   afterEach(() => {

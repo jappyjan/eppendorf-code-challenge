@@ -39,7 +39,7 @@ describe('upsert-drawer.tsx', () => {
 
       nockScope = nock(MOCK_API_ENDPOINT);
 
-      global.fetch = fetch as never;
+      global.fetch = fetch as typeof global.fetch;
     });
 
     afterEach(() => {
@@ -91,26 +91,6 @@ describe('upsert-drawer.tsx', () => {
       await waitFor(() => expect(onClose).toHaveBeenCalled());
     });
 
-    it('should call upsertDevice adn then close when the save button is clicked', async () => {
-      const postResponseMock = vi.fn();
-      nockScope.post('/devices')
-        .reply(200, (_uri, body) => {
-          postResponseMock(body);
-          return {
-            ...body as Device,
-            PK: 'new-pk',
-            SK: 'new-sk',
-          }
-        });
-
-      const onClose = vi.fn();
-      const {getByTestId} = renderWithProviders(<UpsertDrawer onClose={onClose} isOpen={true}/>);
-      const saveButton = getByTestId('upsert-drawer-save-button');
-      saveButton.click();
-      await waitFor(() => expect(postResponseMock).toHaveBeenCalled());
-      await waitFor(() => expect(onClose).toHaveBeenCalled());
-    });
-
     it('should only be visible when isOpen is true', () => {
       const onClose = vi.fn();
       const renderMethodsForClosedDrawer = renderWithProviders(<UpsertDrawer onClose={onClose} isOpen={false}/>);
@@ -122,7 +102,7 @@ describe('upsert-drawer.tsx', () => {
       expect(openedForm).not.toBeNull();
     });
 
-    it('should call upsertDevice with the correct body when the save button is clicked', async () => {
+    it('should call upsertDevice with the correct body when the save button is clicked and then close the drawer', async () => {
       const postResponseMock = vi.fn();
       nockScope.post('/devices')
         .reply(200, (_uri, body) => {

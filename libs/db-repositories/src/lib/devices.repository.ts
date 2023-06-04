@@ -25,4 +25,11 @@ export class DevicesRepository {
       return: 'document',
     }) as DeviceDocument
   }
+
+  public async removeOne(key: Pick<Device, 'PK' | 'SK'>) {
+    await this.model.delete({
+      PK: key.PK,
+      SK: key.SK,
+    });
+  }
 }

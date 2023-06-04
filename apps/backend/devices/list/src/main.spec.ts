@@ -1,6 +1,7 @@
 import {handlerLogic} from "./main";
 import {DevicesRepository} from "@eppendorf-coding-challenge/db-repositories";
 import {Device} from "@eppendorf-coding-challenge/data-interfaces";
+import {APIGatewayProxyEventV2, Context} from "aws-lambda";
 
 describe('main.ts', () => {
   describe('handlerLogic()', () => {
@@ -11,8 +12,8 @@ describe('main.ts', () => {
         }] as unknown as Device[]),
       } as unknown as DevicesRepository;
 
-      const mockEvent = {} as unknown as never;
-      const mockContext = {} as unknown as never;
+      const mockEvent = {} as unknown as APIGatewayProxyEventV2;
+      const mockContext = {} as unknown as Context;
       const mockCallback = jest.fn();
 
       await handlerLogic(mockRepository, mockEvent, mockContext, mockCallback);

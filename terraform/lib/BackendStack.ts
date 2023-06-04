@@ -94,6 +94,15 @@ export class BackendStack extends TerraformStack {
         dynamoReadTables: [],
         dynamoWriteTables: ['Devices']
     });
+
+    this.createEndpoint({
+        handlerLocation: path.resolve(__dirname, "../../dist/apps/backend/devices/delete"),
+        handlerName: "main.handler",
+        path: "/devices/{deviceLocation}/{deviceId}",
+        method: "DELETE",
+        dynamoReadTables: [],
+        dynamoWriteTables: ['Devices'],
+    });
   }
 
   private createEndpoint(

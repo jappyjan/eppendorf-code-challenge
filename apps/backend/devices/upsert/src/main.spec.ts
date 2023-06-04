@@ -1,7 +1,7 @@
 import {Device} from "@eppendorf-coding-challenge/data-interfaces";
 import {DevicesRepository} from "@eppendorf-coding-challenge/db-repositories";
 import {handlerLogic} from "./main";
-import {APIGatewayEvent} from "aws-lambda";
+import {APIGatewayProxyEventV2, Context} from "aws-lambda";
 
 describe('main.ts', () => {
   describe('handlerLogic()', () => {
@@ -17,12 +17,12 @@ describe('main.ts', () => {
           id: 'event-id',
           type: 'event-type',
         }),
-      } as Partial<APIGatewayEvent>;
+      } as Partial<APIGatewayProxyEventV2>;
 
-      const mockContext = {} as unknown as never;
+      const mockContext = {} as unknown as Context;
       const mockCallback = jest.fn();
 
-      await handlerLogic(mockRepository, mockEvent as APIGatewayEvent, mockContext, mockCallback);
+      await handlerLogic(mockRepository, mockEvent as APIGatewayProxyEventV2, mockContext, mockCallback);
 
       expect(mockRepository.upsertDevice).toHaveBeenCalledWith({
         PK: 'event-type',
