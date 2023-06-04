@@ -69,9 +69,6 @@ function DeviceCard(props: DeviceCardProps) {
 
   const deviceHealthTagColorScheme = useMemo(() => {
     switch (device.device_health) {
-      case 'broken':
-        return 'red';
-
       case 'good':
         return 'green';
 
@@ -82,7 +79,10 @@ function DeviceCard(props: DeviceCardProps) {
         return 'orange';
 
       case 'bad':
-        return 'black';
+        return 'pink';
+
+      case 'broken':
+        return 'red';
 
       default:
         return undefined;
