@@ -17,10 +17,7 @@ import {
   VStack
 } from "@chakra-ui/react";
 import {Device} from "@eppendorf-coding-challenge/data-interfaces";
-
-interface DeviceCardProps {
-  device: Device;
-}
+import {UpsertDrawer} from "./create/upsert-drawer";
 
 function SkeletonDeviceCard() {
   return (
@@ -50,8 +47,15 @@ function SkeletonDeviceCard() {
   )
 }
 
+interface DeviceCardProps {
+  device: Device;
+  onClick: () => void;
+}
 function DeviceCard(props: DeviceCardProps) {
-  const {device} = props;
+  const {
+    device,
+    onClick,
+  } = props;
 
   const formattedLastUseDate = useMemo(() => {
     const dateFormatter = new Intl.DateTimeFormat('en-GB', {
@@ -109,6 +113,7 @@ function DeviceCard(props: DeviceCardProps) {
           cursor='pointer'
           maxWidth='400px'
           data-testid='device-card'
+          onClick={onClick}
     >
       <CardHeader>
         <HStack>
@@ -138,6 +143,22 @@ function DeviceCard(props: DeviceCardProps) {
 export function DevicesList() {
   const devicesQuery = useDevices();
 
+  const [showUpsertDrawer, setShowUpsertDrawer] = React.useState(false);
+  const [selectedDeviceId, setSelectedDeviceId] = React.useState<Device['id'] | undefined>(undefined);
+
+  const selectedDevice = useMemo(() => {
+    if (!selectedDeviceId) {
+      return undefined;
+    }
+
+    return devicesQuery.data?.find((device) => device.id === selectedDeviceId);
+  }, [devicesQuery.data, selectedDeviceId]);
+
+  const onDeviceCardClick = React.useCallback((deviceId: Device['id']) => {
+    setSelectedDeviceId(deviceId);
+    setShowUpsertDrawer(true);
+  }, []);
+
   if (devicesQuery.isError) {
     return (
       <Center>
@@ -147,17 +168,28 @@ export function DevicesList() {
   }
 
   return (
-    <SimpleGrid spacing={4}
-                minChildWidth='300px'
-                maxWidth='100%'
-    >
-      {devicesQuery.data?.map((device) => <DeviceCard device={device} key={device.id}/>)}
-      {!devicesQuery.isSuccess && (<>
-        <SkeletonDeviceCard/>
-        <SkeletonDeviceCard/>
-        <SkeletonDeviceCard/>
-        <SkeletonDeviceCard/>
-      </>)}
-    </SimpleGrid>
+    <>
+      <UpsertDrawer originalDevice={selectedDevice}
+                    onClose={() => setShowUpsertDrawer(false)}
+                    isOpen={showUpsertDrawer}
+      />
+      <SimpleGrid spacing={4}
+                  minChildWidth='300px'
+                  maxWidth='100%'
+      >
+        {devicesQuery.data?.map((device) => (
+          <DeviceCard device={device}
+                      key={device.id}
+                      onClick={() => onDeviceCardClick(device.id)}
+          />
+        ))}
+        {!devicesQuery.isSuccess && (<>
+          <SkeletonDeviceCard/>
+          <SkeletonDeviceCard/>
+          <SkeletonDeviceCard/>
+          <SkeletonDeviceCard/>
+        </>)}
+      </SimpleGrid>
+    </>
   )
 }

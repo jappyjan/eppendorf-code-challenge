@@ -1,18 +1,18 @@
 import {DevicesRepository} from './devices.repository';
-import {Model} from "dynamoose/dist/Model";
 import * as seed from 'data/seed.json';
 import type {DeviceDocument} from "@eppendorf-coding-challenge/dynamodb";
+import {ModelType} from "dynamoose/dist/General";
 
 describe('devices.repository.ts', () => {
   describe('DevicesRepository', () => {
     it('should take a Dynamoose Model as a constructor parameter', () => {
-      const model = {} as Model<DeviceDocument>;
+      const model = {} as ModelType<DeviceDocument>;
       const repository = new DevicesRepository(model);
       expect(repository).toBeDefined();
     });
 
     it('should have a method to get all devices', () => {
-      const model = {} as Model<DeviceDocument>;
+      const model = {} as ModelType<DeviceDocument>;
       const repository = new DevicesRepository(model);
       expect(repository.getAllDevices).toBeDefined();
     });
@@ -33,7 +33,7 @@ describe('devices.repository.ts', () => {
           scan: scanMock,
           all: allMock,
           exec: execMock,
-        } as unknown as Model<DeviceDocument>;
+        } as unknown as ModelType<DeviceDocument>;
 
         const repository = new DevicesRepository(model);
         await repository.getAllDevices();
@@ -52,7 +52,7 @@ describe('devices.repository.ts', () => {
           scan: scanMock,
           all: allMock,
           exec: execMock,
-        } as unknown as Model<DeviceDocument>;
+        } as unknown as ModelType<DeviceDocument>;
 
         const repository = new DevicesRepository(model);
         const result = await repository.getAllDevices();

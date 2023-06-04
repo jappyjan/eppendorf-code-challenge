@@ -1,4 +1,4 @@
-import {useQuery, UseQueryOptions} from "react-query";
+import {MutationOptions, useMutation, useQuery, useQueryClient, UseQueryOptions} from "react-query";
 import type {Device} from "@eppendorf-coding-challenge/data-interfaces";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,11 +17,11 @@ function modelDeviceToJson(device: Device): any {
   };
 }
 
-export async function fetchAllDevices() {
+async function fetchAllDevices() {
   const apiEndpoint: string = import.meta.env.VITE_API_ENDPOINT;
   const response = await fetch(`${apiEndpoint}/devices`);
 
-  const rawDevices = await response.clone().json();
+  const rawDevices = await response.json();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return rawDevices.map((rawDevice: any) => ({
@@ -58,6 +58,51 @@ export function useDevices(options?: UseQueryOptions<Array<Device>>) {
           fetchedAt: Date.now(),
         }));
         options?.onSuccess?.(devices);
+      },
+    }
+  );
+}
+
+
+async function upsertDevice(device: Device) {
+  const apiEndpoint: string = import.meta.env.VITE_API_ENDPOINT;
+  const response = await fetch(`${apiEndpoint}/devices`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(modelDeviceToJson(device)),
+  });
+
+  const rawDevice = await response.json();
+
+  return jsonDeviceToModel(rawDevice);
+}
+
+export function useUpsertDeviceMutation(options?: MutationOptions<Device, unknown, Device>) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+      ...options,
+      mutationFn: (device: Device) => upsertDevice(device),
+      mutationKey: ['POST /devices'],
+      onSuccess: (data, variables, context) => {
+        queryClient.setQueryData<Device[]>(['GET /devices'], (oldDevices) => {
+          if (!oldDevices) {
+            return [data];
+          }
+
+          const index = oldDevices.findIndex((device) => device.id === data.id);
+          if (index !== -1) {
+            oldDevices[index] = data;
+          } else {
+            oldDevices.push(data);
+          }
+          return oldDevices;
+        });
+        if (options?.onSuccess) {
+          options.onSuccess(data, variables, context);
+        }
       },
     }
   );

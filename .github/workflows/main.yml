@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -17,11 +18,76 @@ jobs:
         with:
           node-version-file: .nvmrc
       - name: CLI tools
-        run: npm i -g cdktf-cli@latest nx@latest
+        run: npm i -g nx@latest
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: node_modules install
         run: npm ci --force
-      - name: NX build
-        run: nx run-many --target=build
+
+      - name: Build
+        run: nx run-many --target=build --all --parallel
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: dist
+
+  Test_Unit:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [Build]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: dist
+
+      - name: Get cached node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: run unit tests
+        run: nx run-many --target=test --all --parallel
+
+  Deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [Build, Test_Unit]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: dist
+
+      - name: Get cached node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: install cdktf
+        run: npm i -g cdktf-cli@latest
+
       - name: terraform-cdk-action
         uses: hashicorp/terraform-cdk-action@v0.1.26
         with:

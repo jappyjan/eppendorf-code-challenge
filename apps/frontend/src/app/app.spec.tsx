@@ -1,24 +1,24 @@
-import {render} from '@testing-library/react';
+import {render, waitFor} from '@testing-library/react';
 
 import App from './app';
 import {ReactQueryProvider} from "../providers";
 
 describe('App', () => {
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const {baseElement} = render(
       <ReactQueryProvider>
         <App/>
       </ReactQueryProvider>
     );
-    expect(baseElement).toBeTruthy();
+    await waitFor(() => expect(baseElement).toBeTruthy());
   });
 
-  it('should have the application name shown', () => {
+  it('should have the application name shown', async () => {
     const {getByText} = render(
       <ReactQueryProvider>
         <App/>
       </ReactQueryProvider>
     );
-    expect(getByText(/Eppendorf/gi)).toBeTruthy();
+    await waitFor(() => expect(getByText('Eppendorf')).toBeTruthy());
   });
 });

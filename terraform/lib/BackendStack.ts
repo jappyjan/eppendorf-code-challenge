@@ -29,9 +29,19 @@ interface CreateLambdaOptions {
   dynamoWriteTables: string[];
 }
 
+interface CreateEndpointParams {
+  handlerLocation: string;
+  handlerName: string;
+  path: string;
+  method: string;
+  dynamoReadTables: string[];
+  dynamoWriteTables: string[];
+}
+
 export class BackendStack extends TerraformStack {
   private api!: Apigatewayv2Api;
   private dynamoTables: Record<string, DynamodbTable> = {};
+
   // private readonly awsProviderUsEast: AwsProvider;
 
   public constructor(scope: Construct, id: string) {
@@ -66,24 +76,52 @@ export class BackendStack extends TerraformStack {
 
     this.createApiGatewayApi();
 
-    this.createDevicesListEndpoint();
+    this.createEndpoint({
+        handlerLocation: path.resolve(__dirname, "../../dist/apps/backend/devices/list"),
+        handlerName: "main.handler",
+        path: "/devices",
+        method: "GET",
+        dynamoReadTables: ['Devices'],
+        dynamoWriteTables: []
+      },
+    );
+
+    this.createEndpoint({
+        handlerLocation: path.resolve(__dirname, "../../dist/apps/backend/devices/upsert"),
+        handlerName: "main.handler",
+        path: "/devices",
+        method: "POST",
+        dynamoReadTables: [],
+        dynamoWriteTables: ['Devices']
+    });
   }
 
-  private createDevicesListEndpoint() {
-    const devicesListHandler = this.createLambda(
-      "devices-list-handler",
-      path.resolve(__dirname, "../../dist/apps/backend/devices/list"),
-      "main.handler",
+  private createEndpoint(
+    params: CreateEndpointParams,
+  ) {
+    const {
+      handlerLocation,
+      handlerName,
+      path,
+      method,
+      dynamoReadTables,
+      dynamoWriteTables
+    } = params;
+
+    const handler = this.createLambda(
+      `api-${method}-${path}-handler`,
+      handlerLocation,
+      handlerName,
       {
-        dynamoReadTables: ['Devices'],
-        dynamoWriteTables: ['Devices']
+        dynamoReadTables,
+        dynamoWriteTables,
       },
     );
 
     this.addLambdaEndpoint({
-      method: "GET",
-      path: "/devices",
-      handler: devicesListHandler,
+      method,
+      path,
+      handler: handler,
     });
   }
 

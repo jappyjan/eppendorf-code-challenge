@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
-  displayName: 'backend-e2e',
-  preset: '../../../jest.preset.js',
+  displayName: 'backend-devices-upsert-e2e',
+  preset: '../..//jest.preset.js',
   setupFiles: ['<rootDir>/src/test-setup.ts'],
   testEnvironment: 'node',
   transform: {
@@ -12,5 +12,6 @@ export default {
       },
     ],
   },
-  moduleFileExtensions: ['ts', 'js', 'html']
+  moduleFileExtensions: ['ts', 'js', 'html'],
+  coverageDirectory: '../..//coverage/backend-devices-upsert-e2e',
 };
