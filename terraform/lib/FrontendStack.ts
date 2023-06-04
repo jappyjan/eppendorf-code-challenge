@@ -178,7 +178,7 @@ export class FrontendStack extends TerraformStack {
   }
 
   private uploadAssets() {
-    const fileLocationInRepository = './dist/apps/frontend'
+    const fileLocationInRepository = 'dist/apps/frontend'
     const files = glob.sync(`${fileLocationInRepository}/**/*`, { absolute: false, nodir: true });
 
     // Create bucket object for each file
