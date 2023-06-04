@@ -23,13 +23,14 @@ async function handleErrorResponse(response: Response) {
   }
 
   console.error('request failed, response: ', await response.clone().text());
-  try {
-    const parsed = await response.clone().json();
-    // noinspection ExceptionCaughtLocallyJS
+
+  const parsed = await response.clone().json().catch(() => undefined);
+
+  if (parsed) {
     throw new Error(parsed.message);
-  } catch (e) {
-    throw new Error('Request failed with status code ' + response.status);
   }
+
+  throw new Error('Request failed with status code ' + response.status);
 }
 
 async function fetchAllDevices() {
