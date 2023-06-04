@@ -61,7 +61,7 @@ describe('devicesList.spec.tsx', () => {
     it('should render an error message if the request fails', async () => {
       nockScope
         .get('/devices')
-        .reply(500);
+        .reply(500, []);
 
       const {getByText} = renderWithProviders(<DevicesList/>);
 
