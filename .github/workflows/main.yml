@@ -44,11 +44,11 @@ jobs:
   Test_Unit:
     runs-on: ubuntu-latest
     environment: production
-    needs: [Build]
     steps:
-      - uses: actions/download-artifact@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          name: dist
+          fetch-depth: 0
 
       - name: Get cached node modules
         uses: actions/cache@v2
