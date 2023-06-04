@@ -109,7 +109,7 @@ jobs:
         run: npm i -g cdktf-cli@latest nx@latest
 
       - name: build
-        run: nx build frontend
+        run: nx run-many --target=build --all --parallel
 
       - name: terraform deploy frontend
         uses: hashicorp/terraform-cdk-action@v0.1.26
