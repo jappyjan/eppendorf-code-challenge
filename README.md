@@ -25,3 +25,6 @@
 
 ## Project / Tasks
 [Github Project](https://github.com/users/jappyjan/projects/1/views/1)
+
+## Frontend Hosting
+[https://eppendorf.aws.janjaap.de/](https://eppendorf.aws.janjaap.de/)
