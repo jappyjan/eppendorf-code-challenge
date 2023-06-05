@@ -10,17 +10,18 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  FormLabel,
+  FormLabel, HStack,
   Input,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Select,
-  Stack, useToast,
+  Select, Spacer,
+  Stack, useToast, VStack,
 } from "@chakra-ui/react";
 import {useUpsertDeviceMutation} from "../../../queries";
+import {DeleteButton} from "../delete-button/delete-button";
 
 interface UpsertDrawerProps {
   originalDevice?: Device | null | undefined;
@@ -256,9 +257,11 @@ export function UpsertDrawer(props: UpsertDrawerProps) {
             >
               Cancel
             </Button>
+            <DeleteButton device={device} onDelete={onClose}/>
             <Button colorScheme='blue'
                     type='submit'
                     data-testid='upsert-drawer-save-button'
+                    ml={3}
             >
               Save
             </Button>

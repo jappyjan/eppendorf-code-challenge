@@ -127,3 +127,39 @@ export function useUpsertDeviceMutation(options?: MutationOptions<Device, unknow
     }
   );
 }
+
+async function deleteDevice(deviceIdentifier: Pick<Device, 'id' | 'type'>) {
+  const apiEndpoint: string = import.meta.env.VITE_API_ENDPOINT;
+  const response = await fetch(`${apiEndpoint}/devices/${deviceIdentifier.type}/${deviceIdentifier.id}`, {
+    method: 'DELETE',
+  });
+
+  await handleErrorResponse(response);
+}
+
+export function useDeleteDeviceMutation(options?: MutationOptions<unknown, unknown, Pick<Device, 'id' | 'type'>>) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+      ...options,
+      mutationFn: (deviceIdentifier: Pick<Device, 'id' | 'type'>) => deleteDevice(deviceIdentifier),
+      mutationKey: ['DELETE /devices'],
+      onSuccess: (data, variables, context) => {
+        queryClient.setQueryData<Device[]>(['GET /devices'], (oldDevices) => {
+          if (!oldDevices) {
+            return [];
+          }
+
+          const index = oldDevices.findIndex((device) => device.id === variables.id);
+          if (index !== -1) {
+            oldDevices.splice(index, 1);
+          }
+          return oldDevices;
+        });
+        if (options?.onSuccess) {
+          options.onSuccess(data, variables, context);
+        }
+      },
+    }
+  );
+}

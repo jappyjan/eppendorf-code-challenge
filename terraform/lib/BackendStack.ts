@@ -36,6 +36,7 @@ interface CreateEndpointParams {
   method: string;
   dynamoReadTables: string[];
   dynamoWriteTables: string[];
+  internalName: string;
 }
 
 export class BackendStack extends TerraformStack {
@@ -82,26 +83,29 @@ export class BackendStack extends TerraformStack {
         path: "/devices",
         method: "GET",
         dynamoReadTables: ['Devices'],
-        dynamoWriteTables: []
+        dynamoWriteTables: [],
+        internalName: 'list',
       },
     );
 
     this.createEndpoint({
-        handlerLocation: path.resolve(__dirname, "../../dist/apps/backend/devices/upsert"),
-        handlerName: "main.handler",
-        path: "/devices",
-        method: "POST",
-        dynamoReadTables: [],
-        dynamoWriteTables: ['Devices']
+      handlerLocation: path.resolve(__dirname, "../../dist/apps/backend/devices/upsert"),
+      handlerName: "main.handler",
+      path: "/devices",
+      method: "POST",
+      dynamoReadTables: [],
+      dynamoWriteTables: ['Devices'],
+      internalName: 'upsert',
     });
 
     this.createEndpoint({
-        handlerLocation: path.resolve(__dirname, "../../dist/apps/backend/devices/delete"),
-        handlerName: "main.handler",
-        path: "/devices/{deviceLocation}/{deviceId}",
-        method: "DELETE",
-        dynamoReadTables: [],
-        dynamoWriteTables: ['Devices'],
+      handlerLocation: path.resolve(__dirname, "../../dist/apps/backend/devices/delete"),
+      handlerName: "main.handler",
+      path: "/devices/{deviceType}/{deviceId}",
+      method: "DELETE",
+      dynamoReadTables: [],
+      dynamoWriteTables: ['Devices'],
+      internalName: 'delete',
     });
   }
 
@@ -114,11 +118,12 @@ export class BackendStack extends TerraformStack {
       path,
       method,
       dynamoReadTables,
-      dynamoWriteTables
+      dynamoWriteTables,
+      internalName,
     } = params;
 
     const handler = this.createLambda(
-      `api-${method.toLowerCase()}-${path.toLowerCase().split('/').join('-')}-handler`.split('--').join('-'),
+      `api-${internalName}`,
       handlerLocation,
       handlerName,
       {

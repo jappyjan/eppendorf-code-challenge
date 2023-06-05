@@ -1,7 +1,7 @@
 import {Heading, Spacer, HStack, Box, Button} from "@chakra-ui/react";
 import {DevicesList} from "./devices/devicesList";
 import {useQueryClient} from "react-query";
-import {UpsertDrawer} from "./devices/create/upsert-drawer";
+import {UpsertDrawer} from "./devices/upsert/upsert-drawer";
 import React from "react";
 
 export function App() {

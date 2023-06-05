@@ -17,7 +17,7 @@ import {
   VStack
 } from "@chakra-ui/react";
 import {Device} from "@eppendorf-coding-challenge/data-interfaces";
-import {UpsertDrawer} from "./create/upsert-drawer";
+import {UpsertDrawer} from "./upsert/upsert-drawer";
 
 function SkeletonDeviceCard() {
   return (
