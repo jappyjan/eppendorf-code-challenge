@@ -6,10 +6,10 @@ import {DevicesModel} from "@eppendorf-coding-challenge/dynamodb";
 function getDeviceDataFromEvent(event: APIGatewayProxyEventV2): UpsertDeviceData {
   const parsed = JSON.parse(event.body);
 
-  const PK = parsed.PK ?? parsed.type;
+  const PK = String(parsed.PK ?? parsed.type);
   if (!PK) throw new Error('PK or type is required');
 
-  const SK = parsed.SK ?? parsed.id;
+  const SK = String(parsed.SK ?? parsed.id);
   if (!SK) throw new Error('SK or id is required');
 
   let last_used: Date | undefined;
@@ -20,10 +20,6 @@ function getDeviceDataFromEvent(event: APIGatewayProxyEventV2): UpsertDeviceData
       throw new Error('last_used is not a valid date');
     }
   }
-
-  console.log('parsed', parsed);
-  console.log('PK', PK);
-  console.log('SK', SK);
 
   return {
     PK,
@@ -39,8 +35,6 @@ function getDeviceDataFromEvent(event: APIGatewayProxyEventV2): UpsertDeviceData
 }
 
 export async function handlerLogic(devicesRepository: DevicesRepository, event: APIGatewayProxyEventV2, context: Context, callback: Callback) {
-  console.log('event', event);
-
   let deviceDataFromEvent: UpsertDeviceData;
   try {
     deviceDataFromEvent = getDeviceDataFromEvent(event);

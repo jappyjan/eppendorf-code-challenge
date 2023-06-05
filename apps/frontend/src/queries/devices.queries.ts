@@ -2,9 +2,11 @@ import {MutationOptions, useMutation, useQuery, useQueryClient, UseQueryOptions}
 import type {Device} from "@eppendorf-coding-challenge/data-interfaces";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function jsonDeviceToModel(jsonDevice: any): Device {
+export function jsonDeviceToModel(jsonDevice: any): Device {
   return {
     ...jsonDevice,
+    price: Number(jsonDevice.price),
+    id: Number(jsonDevice.id),
     last_used: new Date(jsonDevice.last_used),
   };
 }

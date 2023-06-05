@@ -126,8 +126,8 @@ function DeviceCard(props: DeviceCardProps) {
         </HStack>
       </CardHeader>
       <CardBody>
-        <Text>The {device.type} is currently located at {device.location}.</Text>
-        <Text>It was last used at the {formattedLastUseDate}</Text>
+        <Text>The {device.type} is currently located at <b>{device.location}</b>.</Text>
+        <Text>It was last used at the <b>{formattedLastUseDate}</b></Text>
       </CardBody>
       <CardFooter width='100%'>
         <HStack width='100%'>

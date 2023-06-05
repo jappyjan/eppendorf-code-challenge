@@ -3,6 +3,7 @@ import {DevicesList} from "./devices/devicesList";
 import {useQueryClient} from "react-query";
 import {UpsertDrawer} from "./devices/upsert/upsert-drawer";
 import React from "react";
+import {UpsertFileButton} from "./devices/upsert-file-button/upsert-file-button";
 
 export function App() {
   const queryClient = useQueryClient();
@@ -15,7 +16,10 @@ export function App() {
         <HStack>
           <Heading>Eppendorf</Heading>
           <Spacer/>
-          <Button onClick={() => setShowUpsertDrawer(true)}>+</Button>
+          <Button onClick={() => setShowUpsertDrawer(true)}>Create</Button>
+          <UpsertFileButton>
+            Import File
+          </UpsertFileButton>
           <Button onClick={() => queryClient.refetchQueries()}>Refresh</Button>
         </HStack>
       </nav>

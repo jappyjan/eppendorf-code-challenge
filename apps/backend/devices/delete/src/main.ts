@@ -6,11 +6,6 @@ import {APIGatewayProxyResultV2} from "aws-lambda/trigger/api-gateway-proxy";
 export async function handlerLogic(devicesRepository: DevicesRepository, event: APIGatewayProxyEventV2, context: Context, callback: Callback) {
   const {deviceId, deviceType} = event.pathParameters;
 
-  console.log('event', event);
-
-  console.log('deviceId', deviceId);
-  console.log('deviceType', deviceType);
-
   await devicesRepository.removeOne({
     PK: deviceType,
     SK: deviceId,

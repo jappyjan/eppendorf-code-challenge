@@ -7,11 +7,6 @@
 ## Terraform
 
 
-# For the Future
-
-## Authentication and Authorization
-
-
 # Should be changed
 
 ## Separation of Create and Update of devices to prevent overwriting of data
@@ -24,3 +19,10 @@
 # Important to know
 
 ## NX cloud cache and CI
+
+
+# For the Future
+
+## Authentication and Authorization
+
+## Logging
